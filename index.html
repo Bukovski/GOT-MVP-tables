@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GOT</title>
+  <link rel="shortcut icon" href="../image/favicon.png" type="image/x-icon">
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+
+      max-width: 1200px;
+      margin: 0 auto;
+      font-family: Arial, "Helvetica CY", "Nimbus Sans L", sans-serif;
+    }
+
+    .table {
+      margin-top: 15px;
+      border-collapse: collapse
+    }
+
+    .table__line {
+      border: 1px solid black;
+    }
+
+    .table__header {
+      padding: 5px 0;
+      cursor: pointer;
+    }
+
+    .table__cell {
+      padding: 5px;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 10%;
+      left: calc(50% - (620px));
+      width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+      background: #fff8dd;
+    }
+    
+    .modal__close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 35px;
+      color: red;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<a href="https://anapioficeandfire.com/">anapioficeandfire</a>
+
+<div id="container" class="container">
+  <h1 class="title">GOT Books</h1>
+</div>
+
+<div class="modal">
+  <h2 class="modal__title">Characters</h2>
+  
+  <span class="modal__close">&#10006;</span>
+  
+  <!--<table class="table">
+    <thead>
+      <tr class="table__line">
+        <th class="table__header">aliases</th>
+        <th class="table__header">culture</th>
+        <th class="table__header">gender</th>
+        <th class="table__header">name</th>
+        <th class="table__header">playedBy</th>
+        <th class="table__header">titles</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="table__line">
+        <td class="table__cell">Brotherfuckerthe bitch queen</td>
+        <td class="table__cell">Westerman</td>
+        <td class="table__cell">Female</td>
+        <td class="table__cell">Cersei Lannister</td>
+        <td class="table__cell">Lena Headey</td>
+        <td class="table__cell">Light of the West, Queen Dowager, Protector of the Realm, Lady of Casterly Rock, Queen Regent</td>
+      </tr>
+      <tr class="table__line">
+        <td class="table__cell">Brotherfuckerthe bitch queen</td>
+        <td class="table__cell">Westerman</td>
+        <td class="table__cell">Female</td>
+        <td class="table__cell">Cersei Lannister</td>
+        <td class="table__cell">Lena Headey</td>
+        <td class="table__cell">Light of the West, Queen Dowager, Protector of the Realm, Lady of Casterly Rock, Queen Regent</td>
+      </tr>
+      <tr class="table__line">
+        <td class="table__cell">Brotherfuckerthe bitch queen</td>
+        <td class="table__cell">Westerman</td>
+        <td class="table__cell">Female</td>
+        <td class="table__cell">Cersei Lannister</td>
+        <td class="table__cell">Lena Headey</td>
+        <td class="table__cell">Light of the West, Queen Dowager, Protector of the Realm, Lady of Casterly Rock, Queen Regent</td>
+      </tr>
+    </tbody>
+  </table>-->
+</div>
+
+<script src="./lib/axios.min.js"></script>
+<script src="./file/js/helpers.js"></script>
+<script src="./file/js/event.js"></script>
+<script src="./file/js/model.js"></script>
+<script src="./file/js/view.js"></script>
+<script src="./file/js/presenter.js"></script>
+<script>
+  const model = new ModelBook();
+  const tablePresenter = new PresenterTable(model, new ViewTable());
+  const modalPresenter = new PresenterModal(model,  new ViewModal());
+  
+  const setView = () => modalPresenter.initialize(tablePresenter);
+  
+  window.onload = setView;
+</script>
+</body>
+</html>
