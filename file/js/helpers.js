@@ -1,6 +1,6 @@
 let PATH = {};
 
-if ("develop") {
+if (true) {
   PATH = {
     BOOKS: "./file/json/gotBook.json",
     CHARACTERS: "./file/json/gotCharacters.json",
@@ -32,6 +32,10 @@ function dateFormat(str) {
 
 function isDate(date) {
   return ( date.length > 9 && new Date(date) !== "Invalid Date" && !isNaN(new Date(date)) ) ? true : false;
+}
+
+function isArrayEmpty(arr) {
+  return Array.isArray(arr) && !arr[ 0 ].length;
 }
 
 

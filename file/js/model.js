@@ -1,8 +1,8 @@
 class ModelBook {
   constructor() {
     this._books = [];
-    this._keyMainTable = [ "name", "authors", "mediaType",
-      "numberOfPages", "publisher", "released", "characters" ];
+    this._keyMainTable = [ "name", "authors", "mediaType", "numberOfPages", "publisher", "released", "characters" ];
+    this._keyModalTable = [ "name", "gender", "playedBy", "aliases", "culture", "titles" ];
     this._sortTable = "asc";
     this._characters = {};
   }
@@ -37,7 +37,7 @@ class ModelBook {
     return collectBooks.sort(sorting[ this._sortTable ](field));
   }
   
-  setSortOrderBooks(order) {
+  setSortOrder(order) {
     if (!order || order === "desc") {
       this._sortTable = "asc";
     } else {
@@ -45,7 +45,7 @@ class ModelBook {
     }
   }
   
-  getSortOrderBooks() {
+  getSortOrder() {
     return this._sortTable;
   }
   
@@ -68,7 +68,17 @@ class ModelBook {
   }
   
   getCharactersCollection() {
-    return this._characters;
+    return Object.values(this._characters);
+  }
+  
+  getKeyModalTable() {
+    return this._keyModalTable;
+  }
+  
+  sortCharacters(field) {
+    const collectBooks = this.getCharactersCollection();
+    
+    return collectBooks.sort(sorting[ this._sortTable ](field));
   }
   
 }
