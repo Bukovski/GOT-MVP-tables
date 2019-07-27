@@ -10,65 +10,12 @@ class PresenterTable {
     this.createTable();
   }
   
-  createTableHead(tr, obj) {
-    const arrKey = this._model.keyUpperCase(obj);
-    const attribute = Object.keys(this._model.filterKey(obj));
-    
-    for (let i = 0, len = arrKey.length; i < len; i++) {
-      this._view.drawTableHead(tr, arrKey[ i ], attribute[ i ]);
-    }
-    
-    return tr;
-  }
-  
-  async createTableBody(collection, table) {
-    collection = collection || await this._model.getBookCollection();
-    table = table || this._view.getTable();
-    
-    const tbody = document.createElement("tbody");
-    table.appendChild(tbody);
-    this._view.container.appendChild(table);
-  
-    let td = null;
-  
-    for (let i = 0, len = collection.length; i < len; i++) {
-      const trBody = document.createElement("tr");
-      trBody.className = "table__line";
-    
-      td = this.createTableRow(trBody, collection[ i ]);
-      tbody.appendChild(td);
-    }
-  }
-  
-  createTableRow(tr, obj) {
-    const filterKey = this._model.filterKey(obj);
-    
-    for (let key in filterKey) {
-      const elem = filterKey[ key ];
-      
-      this._view.drawTableRow(tr, elem);
-    }
-    
-    return tr;
-  }
-  
   async createTable() {
-    const bookCollection = await this._model.getBookCollection();
+    const collection = await this._model.getBookCollection();
+    const keyTable = this._model._keyMainTable;
+    const container = this._view.tableContainer;
   
-    const table = document.createElement("table");
-    table.className = "table";
-    
-    const thead = document.createElement("thead");
-    
-    const trHead = document.createElement("tr");
-    trHead.className = "table__line";
-    
-    const tRow = this.createTableHead(trHead, bookCollection[ 0 ]);
-    
-    thead.appendChild(tRow);
-    table.appendChild(thead);
-    
-    this.createTableBody(bookCollection, table);
+    this._view.tableTemplate(container, collection, keyTable, this._model.keyUpperCase(keyTable));
   
     this.eventBindingToTable(); //вызываем только после отрисовки таблицы потому что не на что вешать событие клика
   }
@@ -88,6 +35,13 @@ class PresenterTable {
     })
   }
   
+  tableBodyTemplate(collection) {
+    const table = this._view.getTable();
+    const keyTable = this._model._keyMainTable;
+    
+    this._view.createTableBody(table, collection, keyTable, this._view.tableBodyCallback);
+  }
+  
   async sortTableBody(target) {
     const dataSortOrder = this._view.getAttributeSortOrder(target);
     
@@ -98,7 +52,7 @@ class PresenterTable {
     const sortBooks = await this._model.sortBooks(attrName);
     
     this._view.removeTbodyTable();
-    this.createTableBody(sortBooks)
+    this.tableBodyTemplate(sortBooks)
   }
 }
 

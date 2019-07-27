@@ -1,7 +1,7 @@
 class ModelBook {
   constructor() {
     this._books = [];
-    this._keyFilter = [ "name", "authors", "mediaType",
+    this._keyMainTable = [ "name", "authors", "mediaType",
       "numberOfPages", "publisher", "released", "characters" ];
     this._sortTable = "asc";
     this._characters = {};
@@ -25,24 +25,10 @@ class ModelBook {
     return await this._books;
   }
   
-  filterKey(obj) {
-    const newObj = {};
-    const dataObj = obj;
-    
-    for (let key in dataObj) {
-      if (this._keyFilter.includes( key )) {
-        newObj[ key ] = dataObj[ key ];
-      }
-    }
-    
-    return newObj
-  }
-  
-  keyUpperCase(obj) {
-    const dataForTable = this.filterKey(obj);
+  keyUpperCase(arr) {
     const firstLetter = (str) => str[0].toUpperCase() + str.slice(1).replace(/([A-Z]+)/g, " $1");
     
-    return Object.keys(dataForTable).map(key => firstLetter(key))
+    return arr.map(key => firstLetter(key))
   }
   
   async sortBooks(field) {
@@ -66,13 +52,13 @@ class ModelBook {
   async setCharactersCollection(numberCharacters) {
     if (PATH.HIDE) {
       const arrCharacters = numberCharacters.split(",");
-  
+      
       const arrRequests = arrCharacters.map(async (number) => {
         if (!(number in this._characters)) {
           return this._characters[ number ] = await this.readDataFromServer(PATH.CHARACTERS + number);
         }
       });
-  
+      
       await Promise.all(arrRequests);
     } else {
       this._characters = await this.readDataFromServer(PATH.CHARACTERS);
