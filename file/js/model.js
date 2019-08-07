@@ -6,11 +6,14 @@ class ModelBook {
     this._sortTable = "asc";
     this._charactersBuffer = {};
     this._filterIdCharacters = [];
+    this._paginationCharacters = [];
     this._settingsPagination = {
-      countItems: 5
+      notes: 8, //количество записей в таблице
+      size: 10, // количество кнопок в пагинации
+      page: 1,  // старовать с номера страницы
+      step: 3   // количество кнопок перед и поесле активной кнопки
     }
   }
-  
   readDataFromServer(link) {
     return axios.get(link)
       .then((response) => {
@@ -86,6 +89,18 @@ class ModelBook {
   }
   
   getCharactersCollection() {
+    const notesOnPage = this._settingsPagination.notes;
+    
+    this._settingsPagination.size = Math.ceil(this._filterIdCharacters.length / notesOnPage);
+    
+    const pageNum = 2; //<-- +target.innerHTML
+    const start = (pageNum - 1) * notesOnPage;
+    const end = start + notesOnPage;
+    
+    const notes = this._filterIdCharacters.slice(start, end);
+    console.log(notes)
+    return notes;
+    
     return this._filterIdCharacters;
   }
   
@@ -97,6 +112,25 @@ class ModelBook {
     const collectBooks = this.getCharactersCollection();
     
     return collectBooks.sort(sorting[ this._sortTable ](field));
+  }
+  
+  getPaginationSettings() {
+    return this._settingsPagination
+  }
+  
+  setPaginationSettings(...collection) {
+    const checkDataObject = (before, item) => {
+      if (keySettings.includes( Object.keys(item)[ 0 ] )) {
+        return before = Object.assign(before, item)
+      }
+  
+      return before
+    };
+    
+    const keySettings = Object.keys(this._settingsPagination);
+    const getObjectData = collection.reduce(checkDataObject, {});
+
+    this._settingsPagination = Object.assign(this._settingsPagination, getObjectData);
   }
   
 }

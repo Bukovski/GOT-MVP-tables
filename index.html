@@ -53,6 +53,29 @@
       color: red;
       cursor: pointer;
     }
+
+    .modal__pagination {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0;
+      padding: 0;
+      list-style-type: none;
+    }
+    .modal__pagination a {
+      margin-right: 5px;
+      padding: 10px;
+      border: 1px solid black;
+    }
+    .modal__pagination span {
+      padding: 10px;
+    }
+    
+    .modal__pagination a:hover,
+    .modal__current-page {
+      cursor: pointer;
+      color: red;
+      border: 1px solid red;
+    }
   </style>
 </head>
 <body>

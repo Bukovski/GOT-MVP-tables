@@ -61,6 +61,7 @@ class PresenterModal {
   constructor(model, view) {
     this._model = model;
     this._view = view;
+    this._paginationLayout = "";
   }
   
   initialize(presenter) {
@@ -94,6 +95,8 @@ class PresenterModal {
     
     this.eventBindingToTable(); //вызываем только после отрисовки таблицы потому что не на что вешать событие клика
     this._view.paginationTemplate(); //<-- отрисовываем шаблон для пагинации
+    this.eventPagination();
+    this.startPagination();
   }
   
   eventBindingToTable() {
@@ -124,6 +127,110 @@ class PresenterModal {
     
     this._view.removeTbodyTable();
     this.tableBodyTemplate(sortBooks)
+  }
+  
+  eventPagination() {
+    this._view.togglePaginationButtonLeft((event) => {
+      let pageNumber = this._model.getPaginationSettings().page;
+      
+      pageNumber--;
+      
+      this._model.setPaginationSettings({ page: pageNumber });
+
+      if (pageNumber < 1) {
+        this._model.setPaginationSettings({ page: 1 });
+      }
+      
+      console.log(this._model.getPaginationSettings())
+      this.startPagination();
+  
+    });
+    
+    
+    this._view.togglePaginationButtonRight((event) => {
+      let pageNumber = this._model.getPaginationSettings().page;
+      let pageSize = this._model.getPaginationSettings().size;
+  
+      pageNumber++;
+  
+      this._model.setPaginationSettings({ page: pageNumber });
+  
+      if (pageNumber > pageSize) {
+        this._model.setPaginationSettings({ page: pageSize });
+      }
+  
+      console.log(this._model.getPaginationSettings())
+      this.startPagination();
+  
+    });
+  }
+  
+  addPagesNumberPagination(from, to) {
+    for (let item = from; item < to; item++) {
+      this._paginationLayout += `<a>${ item }</a>`;
+    }
+  }
+  
+  addFirstPagePagination() {
+    this._paginationLayout += '<a>1</a><i>...</i>';
+  }
+  
+  addLastPagePagination() {
+    const pageSize = this._model.getPaginationSettings().size;
+  
+    this._paginationLayout += `<i>...</i><a>${ pageSize }</a>`;
+  }
+  
+  writePagination() {
+    this._view.getPaginationSpan().innerHTML = this._paginationLayout;
+    this._paginationLayout = "";
+  
+    this.writeButtonsNumberPagination();
+  }
+  
+  writeButtonsNumberPagination() {
+    let pageNumber = this._model.getPaginationSettings().page;
+    const tagLinc = this._view.getPaginationInnerButtons();
+    
+    const buttonsClick = () => { //вешаем события на кнопки с номерами
+      pageNumber = +this.innerHTML; //получаем номер из кнопки на которую нажали и сохраняем в настройках
+      
+      this.startPagination();
+    };
+    
+    for (let item = 0, len = tagLinc.length; item < len; item++) {
+      if (+tagLinc[ item ].innerHTML === pageNumber) {
+        // showPage(tagLinc[ item ]); //отрисовать таблицу с текущим номером пагинации
+        
+        tagLinc[ item ].className = 'modal__current-page';
+      }
+      
+      tagLinc[ item ].addEventListener('click', buttonsClick);
+    }
+  }
+  
+  startPagination() {
+    const pageStep = this._model.getPaginationSettings().step;
+    const pageSize = this._model.getPaginationSettings().size;
+    const pageNumber = this._model.getPaginationSettings().page;
+    const stepBothSide = pageStep * 2; //отступаем с двух сорон от номера 6
+    // showPage(settings.step)
+    
+    if ( pageSize < stepBothSide + 6 ) { //6 потому что по бокам стрелка + номер (1 или 30) + ...
+      this.addPagesNumberPagination( 1, pageSize + 1 ); //1-30 в том случае когда не нежно отрисовывать троеточие по бокам
+    } else if ( pageNumber < stepBothSide + 1 ) { //когда находимся на 2 странице
+      this.addPagesNumberPagination(1, stepBothSide + 4);
+      this.addLastPagePagination();
+    } else if ( pageNumber > pageSize - stepBothSide ) { // если текущая страница больше 24 то вставляем первую страницу в начало
+      this.addFirstPagePagination();
+      this.addPagesNumberPagination( (pageSize - stepBothSide) - 2, pageSize + 1 );
+    } else { //добавляем числа в начало и в конец, а в центре выводим нумерацию страниц
+      this.addFirstPagePagination();
+      this.addPagesNumberPagination(pageNumber - pageStep, (pageNumber + pageStep) + 1);
+      this.addLastPagePagination()
+    }
+    
+    this.writePagination()
   }
   
   

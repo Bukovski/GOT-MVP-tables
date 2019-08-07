@@ -128,6 +128,13 @@ class ViewModal {
   
   hideModalWindow() {
     this.modal.style.display = "none";
+    
+    this.clearModalWindow();
+  }
+  
+  clearModalWindow() {
+    this.modal.querySelector("#modalTable").remove();
+    this.modal.querySelector("#modalPagination").remove();
   }
   
   bindModalClose(callback) {
@@ -241,6 +248,7 @@ class ViewModal {
   paginationTemplate() {
     const wrapper = document.createElement('div');
     wrapper.className = "modal__pagination";
+    wrapper.id = "modalPagination";
     
     const linkLeft = document.createElement('a');
     linkLeft.innerHTML = "&#9668";
@@ -254,6 +262,26 @@ class ViewModal {
     wrapper.appendChild(linkLeft);
     wrapper.appendChild(span);
     wrapper.appendChild(linkRight);
+  }
+  
+  getPaginationSpan() {
+    return this.modal.querySelector("#modalPagination > span")
+  }
+  
+  getPaginationLinks() {
+    return this.modal.getElementsByTagName("a");
+  }
+  
+  getPaginationInnerButtons() {
+    return this.getPaginationSpan().getElementsByTagName('a');
+  }
+  
+  togglePaginationButtonLeft(callback) {
+    this.getPaginationLinks()[ 0 ].addEventListener("click", callback)
+  }
+  
+  togglePaginationButtonRight(callback) {
+    this.getPaginationLinks()[ 1 ].addEventListener("click", callback)
   }
   
 }
