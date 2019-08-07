@@ -4,7 +4,11 @@ class ModelBook {
     this._keyMainTable = [ "name", "authors", "mediaType", "numberOfPages", "publisher", "released", "characters" ];
     this._keyModalTable = [ "name", "gender", "playedBy", "aliases", "culture", "titles" ];
     this._sortTable = "asc";
-    this._characters = {};
+    this._charactersBuffer = {};
+    this._filterIdCharacters = [];
+    this._settingsPagination = {
+      countItems: 5
+    }
   }
   
   readDataFromServer(link) {
@@ -49,26 +53,40 @@ class ModelBook {
     return this._sortTable;
   }
   
+  setArrayIDCharacters(arrId) {
+    this._filterIdCharacters = arrId.reduce((before, item) => {
+      const character = this._charactersBuffer[ item ];
+    
+      if (character) {
+        return before.concat(character)
+      }
+    
+      return before;
+    }, []);
+  }
+  
   async setCharactersCollection(numberCharacters) {
+    const idCharacters = numberCharacters.split(",");
+    
     if (PATH.HIDE) {
-      const arrCharacters = numberCharacters.split(",");
-      
-      const arrRequests = arrCharacters.map(async (number) => {
-        if (!(number in this._characters)) {
-          return this._characters[ number ] = await this.readDataFromServer(PATH.CHARACTERS + number);
+      const arrRequests = idCharacters.map(async (number) => {
+        if (!(number in this._charactersBuffer)) {
+          return this._charactersBuffer[ number ] = await this.readDataFromServer(PATH.CHARACTERS + number);
         }
       });
       
       await Promise.all(arrRequests);
     } else {
-      this._characters = await this.readDataFromServer(PATH.CHARACTERS);
+      this._charactersBuffer = await this.readDataFromServer(PATH.CHARACTERS);
     }
+    
+    this.setArrayIDCharacters(idCharacters);
     
     customEvents.runListener(EVENT.REQUESTS_CHARACTERS);
   }
   
   getCharactersCollection() {
-    return Object.values(this._characters);
+    return this._filterIdCharacters;
   }
   
   getKeyModalTable() {

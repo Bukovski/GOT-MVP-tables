@@ -77,8 +77,7 @@ class PresenterModal {
   showModalCharacters() {
     const charactersCollection = this._model.getCharactersCollection();
     
-    console.log(charactersCollection[ 238 ]);
-    
+    console.log(charactersCollection[ 38 ]);
     this._view.showModalWindow();
   }
   
@@ -94,6 +93,7 @@ class PresenterModal {
     this._view.tableTemplate(container, collection, keyTable, this._model.keyUpperCase(keyTable));
     
     this.eventBindingToTable(); //вызываем только после отрисовки таблицы потому что не на что вешать событие клика
+    this._view.paginationTemplate(); //<-- отрисовываем шаблон для пагинации
   }
   
   eventBindingToTable() {
@@ -113,14 +113,14 @@ class PresenterModal {
     this._view.createTableBody(table, collection, keyTable, this._view.tableBodyCallback);
   }
   
-  async sortTableBody(target) {
+  sortTableBody(target) {
     const dataSortOrder = this._view.getAttributeSortOrder(target);
     
     this._model.setSortOrder(dataSortOrder);
     this._view.setAttributeSortOrder(target, this._model.getSortOrder());
     
     const attrName = target.getAttribute('data-name');
-    const sortBooks = await this._model.sortCharacters(attrName);
+    const sortBooks = this._model.sortCharacters(attrName);
     
     this._view.removeTbodyTable();
     this.tableBodyTemplate(sortBooks)

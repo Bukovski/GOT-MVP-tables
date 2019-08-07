@@ -238,4 +238,22 @@ class ViewModal {
     return domElement.getAttribute("data-order");
   }
   
+  paginationTemplate() {
+    const wrapper = document.createElement('div');
+    wrapper.className = "modal__pagination";
+    
+    const linkLeft = document.createElement('a');
+    linkLeft.innerHTML = "&#9668";
+    
+    const linkRight = document.createElement('a');
+    linkRight.innerHTML = "&#9658";
+    
+    const span = document.createElement('span');
+  
+    this.modal.appendChild(wrapper);
+    wrapper.appendChild(linkLeft);
+    wrapper.appendChild(span);
+    wrapper.appendChild(linkRight);
+  }
+  
 }

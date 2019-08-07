@@ -1,6 +1,8 @@
 let PATH = {};
 
 if (true) {
+  console.log("Local data");
+  
   PATH = {
     BOOKS: "./file/json/gotBook.json",
     CHARACTERS: "./file/json/gotCharacters.json",
