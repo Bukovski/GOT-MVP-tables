@@ -17,7 +17,7 @@ class PresenterTable {
   
     this._view.tableTemplate(container, collection, keyTable, this._model.keyUpperCase(keyTable));
   
-    this.eventBindingToTable(); //вызываем только после отрисовки таблицы потому что не на что вешать событие клика
+    this.eventBindingToTable(); //call only after drawing the table (for events click)
   }
   
   eventBindingToTable() {
@@ -80,18 +80,25 @@ class PresenterModal {
     
     this._view.showModalWindow(); //drawn modal window
     
-    this._view.paginationTemplate(); //drawn pagination
-    this.eventPagination();
-    this.startPagination();
+    this.showPagination();
+    this.showSelectOption();
   }
   
   closeModalCharacters(event) {
     this._view.hideModalWindow();
     
-    this._view.removeModalWindowTable();
-    this._view.removeModalWindowPagination();
-    
-    this._model.setPaginationSettings({ page: 1 });
+    this.resetDataInsideModalWindow();
+  }
+  
+  showPagination() {
+    this._view.paginationTemplate(); //drawn pagination
+    this.eventPagination();
+    this.startPagination();
+  }
+  
+  showSelectOption() {
+    this.addOptionToSelect();
+    this.eventOptionOfSelect();
   }
   
   createTable() {
@@ -101,7 +108,14 @@ class PresenterModal {
     
     this._view.tableTemplate(container, collection, keyTable, this._model.keyUpperCase(keyTable));
     
-    this.eventBindingToTable(); //вызываем только после отрисовки таблицы потому что не на что вешать событие клика
+    this.eventBindingToTable(); //call only after drawing the table (for events click)
+  }
+  
+  resetDataInsideModalWindow() {
+    this._view.removeModalWindowTable();
+    this._view.removeModalWindowPagination();
+  
+    this._model.setPaginationSettings({ page: 1 });
   }
   
   eventBindingToTable() {
@@ -239,6 +253,46 @@ class PresenterModal {
     }
     
     this.writePagination()
+  }
+  
+  addOptionToSelect() {
+    const whereToInsert = this._view.selectOfRecord;
+    const currentCountOfRecords = this._model.getPaginationSettings().notes;
+    let select;
+    
+    for (let item = 1; item < 16; item++) {
+      
+      if (currentCountOfRecords === item) {
+        select = item;
+      }
+      
+      this._view.selectOptionTemplate(whereToInsert, item);
+    }
+    
+    whereToInsert[ select - 1 ].selected = true;
+  }
+  
+  eventOptionOfSelect() {
+    const resetDataOnPage = () => {
+      const currentPageNumber = this._model.getPaginationSettings().page;
+      const getPieceOfData = this._model.getCharactersCollection(currentPageNumber);
+  
+      this._view.removeTbodyTable();
+      this._view.removeModalWindowPagination();
+  
+      this.tableBodyTemplate(getPieceOfData);
+  
+      this.showPagination();
+    };
+    
+    this._view.toggleSelectRecordsOfPage((even) => {
+      const target = even.target;
+      const valueOfOption = target.options[ target.selectedIndex ].value;
+      
+      this._model.setPaginationSettings({ notes: parseInt(valueOfOption) });
+  
+      resetDataOnPage();
+    })
   }
   
   

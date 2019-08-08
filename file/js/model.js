@@ -6,7 +6,6 @@ class ModelBook {
     this._sortTable = "asc";
     this._charactersBuffer = {};
     this._filterIdCharacters = [];
-    this._paginationCharacters = [];
     this._settingsPagination = {
       notes: 8, // count of record on the modal table
       size: 10, // count of number buttons in pagination

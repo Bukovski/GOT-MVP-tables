@@ -4,79 +4,7 @@
   <meta charset="UTF-8">
   <title>GOT</title>
   <link rel="shortcut icon" href="../image/favicon.png" type="image/x-icon">
-  <style>
-    .container {
-      display: flex;
-      flex-direction: column;
-
-      max-width: 1200px;
-      margin: 0 auto;
-      font-family: Arial, "Helvetica CY", "Nimbus Sans L", sans-serif;
-    }
-
-    .table {
-      width: 100%;
-      margin-top: 15px;
-      border-collapse: collapse
-    }
-
-    .table__line {
-      border: 1px solid black;
-    }
-
-    .table__header {
-      padding: 5px 0;
-      cursor: pointer;
-    }
-
-    .table__cell {
-      padding: 5px;
-    }
-    
-    .modal {
-      display: none;
-      position: fixed;
-      top: 10%;
-      left: calc(50% - (620px));
-      width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      text-align: center;
-      background: #fff8dd;
-    }
-    
-    .modal__close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 35px;
-      color: red;
-      cursor: pointer;
-    }
-
-    .modal__pagination {
-      display: flex;
-      justify-content: center;
-      margin: 10px 0;
-      padding: 0;
-      list-style-type: none;
-    }
-    .modal__pagination a {
-      margin-right: 5px;
-      padding: 10px;
-      border: 1px solid black;
-    }
-    .modal__pagination span {
-      padding: 10px;
-    }
-    
-    .modal__pagination a:hover,
-    .modal__current-page {
-      cursor: pointer;
-      color: red;
-      border: 1px solid red;
-    }
-  </style>
+  <link rel="stylesheet" href="./file/css/style.css">
 </head>
 <body>
 
@@ -87,9 +15,12 @@
 </div>
 
 <div class="modal">
-  <h2 class="modal__title">Characters</h2>
-  
+  <div class="modal__header">
+    <h2 class="modal__title">Characters</h2>
+    <select id="modalSelect" class="modal__select"></select>
+  </div>
   <span class="modal__close">&#10006;</span>
+  
 </div>
 
 <script src="./lib/axios.min.js"></script>

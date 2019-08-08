@@ -120,6 +120,7 @@ class ViewModal {
   constructor() {
     this.modal = document.getElementsByClassName("modal")[ 0 ];
     this.crossClosure = document.getElementsByClassName("modal__close")[ 0 ];
+    this.selectOfRecord = document.getElementById("modalSelect");
   }
   
   showModalWindow() {
@@ -141,7 +142,6 @@ class ViewModal {
   bindModalClose(callback) {
     this.crossClosure.addEventListener("click", callback);
   }
-  
   
   createTableHeader(table, fields, fieldTitles, callback) {
     table = table || document.createElement('table');
@@ -285,4 +285,16 @@ class ViewModal {
     this.getPaginationLinks()[ 1 ].addEventListener("click", callback)
   }
   
+  selectOptionTemplate(parent, text, current) {
+    const option = document.createElement('option');
+    
+    option.innerHTML = text;
+    option.value = text;
+    
+    parent.appendChild(option)
+  }
+  
+  toggleSelectRecordsOfPage(callback) {
+    this.selectOfRecord.addEventListener("click", callback)
+  }
 }

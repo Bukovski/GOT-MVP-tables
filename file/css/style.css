@@ -1,0 +1,87 @@
+.container {
+  display: flex;
+  flex-direction: column;
+
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, "Helvetica CY", "Nimbus Sans L", sans-serif;
+}
+
+.table {
+  width: 100%;
+  margin-top: 15px;
+  border-collapse: collapse
+}
+
+.table__line {
+  border: 1px solid black;
+}
+
+.table__header {
+  padding: 5px 0;
+  cursor: pointer;
+}
+
+.table__cell {
+  padding: 5px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 5%;
+  left: calc(50% - (620px));
+  width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  background: #fff8dd;
+}
+.modal__header {
+  display: flex;
+  justify-content: center;
+}
+.modal__title {
+  margin: 0;
+}
+.modal__select {
+  position: relative;
+  bottom: 6px;
+  left: 30px;
+  padding: 10px;
+  font-size: 16px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.modal__close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 35px;
+  color: red;
+  cursor: pointer;
+}
+
+.modal__pagination {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+  padding: 0;
+  list-style-type: none;
+}
+.modal__pagination a {
+  margin-right: 5px;
+  padding: 10px;
+  border: 1px solid black;
+}
+.modal__pagination span {
+  padding: 10px;
+}
+
+.modal__pagination a:hover,
+.modal__current-page {
+  cursor: pointer;
+  color: red;
+  border: 1px solid red;
+}
