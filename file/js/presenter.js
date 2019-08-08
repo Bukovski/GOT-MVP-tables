@@ -76,27 +76,32 @@ class PresenterModal {
   }
   
   showModalCharacters() {
-    const charactersCollection = this._model.getCharactersCollection();
+    this.createTable(); //must be first for get data before drawn
     
-    console.log(charactersCollection[ 38 ]);
-    this._view.showModalWindow();
+    this._view.showModalWindow(); //drawn modal window
+    
+    this._view.paginationTemplate(); //drawn pagination
+    this.eventPagination();
+    this.startPagination();
   }
   
   closeModalCharacters(event) {
     this._view.hideModalWindow();
+    
+    this._view.removeModalWindowTable();
+    this._view.removeModalWindowPagination();
+    
+    this._model.setPaginationSettings({ page: 1 });
   }
   
-  async createTable() {
-    const collection = await this._model.getCharactersCollection();
+  createTable() {
+    const collection = this._model.getCharactersCollection();
     const keyTable = this._model.getKeyModalTable();
     const container = this._view.modal;
     
     this._view.tableTemplate(container, collection, keyTable, this._model.keyUpperCase(keyTable));
     
     this.eventBindingToTable(); //вызываем только после отрисовки таблицы потому что не на что вешать событие клика
-    this._view.paginationTemplate(); //<-- отрисовываем шаблон для пагинации
-    this.eventPagination();
-    this.startPagination();
   }
   
   eventBindingToTable() {
@@ -141,27 +146,22 @@ class PresenterModal {
         this._model.setPaginationSettings({ page: 1 });
       }
       
-      console.log(this._model.getPaginationSettings())
       this.startPagination();
-  
     });
     
     
     this._view.togglePaginationButtonRight((event) => {
-      let pageNumber = this._model.getPaginationSettings().page;
-      let pageSize = this._model.getPaginationSettings().size;
+      let { size, page } = this._model.getPaginationSettings();
   
-      pageNumber++;
+      page++;
   
-      this._model.setPaginationSettings({ page: pageNumber });
+      this._model.setPaginationSettings({ page: page });
   
-      if (pageNumber > pageSize) {
-        this._model.setPaginationSettings({ page: pageSize });
+      if (page > size) {
+        this._model.setPaginationSettings({ page: size });
       }
   
-      console.log(this._model.getPaginationSettings())
       this.startPagination();
-  
     });
   }
   
@@ -192,41 +192,45 @@ class PresenterModal {
     let pageNumber = this._model.getPaginationSettings().page;
     const tagLinc = this._view.getPaginationInnerButtons();
     
-    const buttonsClick = () => { //вешаем события на кнопки с номерами
-      pageNumber = +this.innerHTML; //получаем номер из кнопки на которую нажали и сохраняем в настройках
+    const buttonsClick = (event) => {
+      const numberPage = +event.target.innerHTML; //get number of click button
       
+      this._model.setPaginationSettings({ page: numberPage });
       this.startPagination();
     };
     
     for (let item = 0, len = tagLinc.length; item < len; item++) {
-      if (+tagLinc[ item ].innerHTML === pageNumber) {
-        // showPage(tagLinc[ item ]); //отрисовать таблицу с текущим номером пагинации
+      const tag = tagLinc[ item ];
+      
+      if (parseInt(tag.innerHTML) === pageNumber) {
+        this._view.removeTbodyTable();
         
-        tagLinc[ item ].className = 'modal__current-page';
+        this.tableBodyTemplate(this._model.getCharactersCollection( parseInt(tag.innerHTML)) );
+        
+        tag.className = 'modal__current-page';
       }
       
-      tagLinc[ item ].addEventListener('click', buttonsClick);
+      tag.addEventListener('click', buttonsClick);
     }
   }
   
   startPagination() {
-    const pageStep = this._model.getPaginationSettings().step;
-    const pageSize = this._model.getPaginationSettings().size;
-    const pageNumber = this._model.getPaginationSettings().page;
-    const stepBothSide = pageStep * 2; //отступаем с двух сорон от номера 6
-    // showPage(settings.step)
+    const { step, size, page } = this._model.getPaginationSettings();
     
-    if ( pageSize < stepBothSide + 6 ) { //6 потому что по бокам стрелка + номер (1 или 30) + ...
-      this.addPagesNumberPagination( 1, pageSize + 1 ); //1-30 в том случае когда не нежно отрисовывать троеточие по бокам
-    } else if ( pageNumber < stepBothSide + 1 ) { //когда находимся на 2 странице
+    const stepBothSide = step * 2;
+    
+    if ( size < stepBothSide + 6 ) {
+      this.addPagesNumberPagination( 1, size + 1 );
+    } else if ( page < stepBothSide + 1 ) {
       this.addPagesNumberPagination(1, stepBothSide + 4);
       this.addLastPagePagination();
-    } else if ( pageNumber > pageSize - stepBothSide ) { // если текущая страница больше 24 то вставляем первую страницу в начало
+    } else if ( page > size - stepBothSide ) {
+      console.log( (size - stepBothSide) - 2, size + 1 );
       this.addFirstPagePagination();
-      this.addPagesNumberPagination( (pageSize - stepBothSide) - 2, pageSize + 1 );
-    } else { //добавляем числа в начало и в конец, а в центре выводим нумерацию страниц
+      this.addPagesNumberPagination( (size - stepBothSide) - 2, size + 1 );
+    } else {
       this.addFirstPagePagination();
-      this.addPagesNumberPagination(pageNumber - pageStep, (pageNumber + pageStep) + 1);
+      this.addPagesNumberPagination( (page - step), ((page + step) + 1) );
       this.addLastPagePagination()
     }
     
@@ -238,6 +242,5 @@ class PresenterModal {
     this._view.bindModalClose(this.closeModalCharacters.bind(this));
     
     customEvents.addListener(EVENT.REQUESTS_CHARACTERS, () => this.showModalCharacters());
-    customEvents.addListener(EVENT.REQUESTS_CHARACTERS, () => this.createTable());
   }
 }

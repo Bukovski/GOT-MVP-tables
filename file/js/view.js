@@ -128,12 +128,13 @@ class ViewModal {
   
   hideModalWindow() {
     this.modal.style.display = "none";
-    
-    this.clearModalWindow();
   }
   
-  clearModalWindow() {
+  removeModalWindowTable() {
     this.modal.querySelector("#modalTable").remove();
+  }
+  
+  removeModalWindowPagination() {
     this.modal.querySelector("#modalPagination").remove();
   }
   

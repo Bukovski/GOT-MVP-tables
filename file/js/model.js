@@ -8,10 +8,10 @@ class ModelBook {
     this._filterIdCharacters = [];
     this._paginationCharacters = [];
     this._settingsPagination = {
-      notes: 8, //количество записей в таблице
-      size: 10, // количество кнопок в пагинации
-      page: 1,  // старовать с номера страницы
-      step: 3   // количество кнопок перед и поесле активной кнопки
+      notes: 8, // count of record on the modal table
+      size: 10, // count of number buttons in pagination
+      page: 1,  // start pagination from number
+      step: 3   // count of button before and after active button
     }
   }
   readDataFromServer(link) {
@@ -88,20 +88,21 @@ class ModelBook {
     customEvents.runListener(EVENT.REQUESTS_CHARACTERS);
   }
   
-  getCharactersCollection() {
-    const notesOnPage = this._settingsPagination.notes;
+  getCharactersCollection(pageNumber = 1) {
+    const recordsPerPage = this._settingsPagination.notes;
     
-    this._settingsPagination.size = Math.ceil(this._filterIdCharacters.length / notesOnPage);
+    this._settingsPagination.size = Math.ceil(this._filterIdCharacters.length / recordsPerPage);
     
-    const pageNum = 2; //<-- +target.innerHTML
-    const start = (pageNum - 1) * notesOnPage;
-    const end = start + notesOnPage;
+    const pageNum = parseInt(pageNumber) - 1;
+    const start = pageNum * recordsPerPage;
+    const end = start + recordsPerPage;
     
-    const notes = this._filterIdCharacters.slice(start, end);
-    console.log(notes)
-    return notes;
+    const records = this._filterIdCharacters.slice(start, end);
     
-    return this._filterIdCharacters;
+    console.log(records)
+    console.log(pageNumber)
+    
+    return records;
   }
   
   getKeyModalTable() {
