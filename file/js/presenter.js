@@ -128,10 +128,14 @@ class PresenterModal {
     this._view.setAttributeSortOrder(target, this._model.getSortOrder());
     
     const attrName = target.getAttribute('data-name');
-    const sortBooks = this._model.sortCharacters(attrName);
+    this._model.sortCharacters(attrName);
+    
+    const currentPageNumber = this._model.getPaginationSettings().page;
+    const getPieceOfData = this._model.getCharactersCollection(currentPageNumber);
     
     this._view.removeTbodyTable();
-    this.tableBodyTemplate(sortBooks)
+    
+    this.tableBodyTemplate(getPieceOfData)
   }
   
   eventPagination() {

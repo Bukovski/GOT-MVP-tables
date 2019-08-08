@@ -110,7 +110,7 @@ class ModelBook {
   }
   
   sortCharacters(field) {
-    const collectBooks = this.getCharactersCollection();
+    const collectBooks = this._filterIdCharacters;
     
     return collectBooks.sort(sorting[ this._sortTable ](field));
   }
