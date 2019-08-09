@@ -82,8 +82,6 @@ class PresenterModal {
     
     this._view.showModalWindow(); //drawn modal window
     
-    this.showSelectOption();
-    
     customEvents.runListener(EVENT.SHOW_PAGINATION);
   }
   
@@ -202,7 +200,8 @@ class PresenterModal {
   
   buildModalWindow() {
     this._view.bindModalClose(this.closeModalCharacters.bind(this));
-    
+    this.showSelectOption(); //only once for all modal window
+  
     customEvents.addListener(EVENT.REQUESTS_CHARACTERS, () => this.showModalCharacters());
     customEvents.addListener(EVENT.CHARACTERS_BODY_LIST, (number) => {
       this.tableBodyTemplate(this._model.getCharactersCollection( parseInt(number)) );
