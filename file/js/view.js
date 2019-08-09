@@ -135,10 +135,6 @@ class ViewModal {
     this.modal.querySelector("#modalTable").remove();
   }
   
-  removeModalWindowPagination() {
-    this.modal.querySelector("#modalPagination").remove();
-  }
-  
   bindModalClose(callback) {
     this.crossClosure.addEventListener("click", callback);
   }
@@ -246,6 +242,30 @@ class ViewModal {
     return domElement.getAttribute("data-order");
   }
   
+  selectOptionTemplate(parent, text, current) {
+    const option = document.createElement('option');
+    
+    option.innerHTML = text;
+    option.value = text;
+    
+    parent.appendChild(option)
+  }
+  
+  toggleSelectRecordsOfPage(callback) {
+    this.selectOfRecord.addEventListener("click", callback)
+  }
+}
+
+
+class ViewPagination {
+  constructor() {
+    this.modal = document.getElementsByClassName("modal")[ 0 ];
+  }
+  
+  removePaginationOnPage() {
+    this.modal.querySelector("#modalPagination").remove();
+  }
+  
   paginationTemplate() {
     const wrapper = document.createElement('div');
     wrapper.className = "modal__pagination";
@@ -258,7 +278,7 @@ class ViewModal {
     linkRight.innerHTML = "&#9658";
     
     const span = document.createElement('span');
-  
+    
     this.modal.appendChild(wrapper);
     wrapper.appendChild(linkLeft);
     wrapper.appendChild(span);
@@ -283,18 +303,5 @@ class ViewModal {
   
   togglePaginationButtonRight(callback) {
     this.getPaginationLinks()[ 1 ].addEventListener("click", callback)
-  }
-  
-  selectOptionTemplate(parent, text, current) {
-    const option = document.createElement('option');
-    
-    option.innerHTML = text;
-    option.value = text;
-    
-    parent.appendChild(option)
-  }
-  
-  toggleSelectRecordsOfPage(callback) {
-    this.selectOfRecord.addEventListener("click", callback)
   }
 }

@@ -74,6 +74,7 @@ class PresenterModal {
   initListeners() {
     customEvents.registerListener(EVENT.REQUESTS_CHARACTERS);
     customEvents.registerListener(EVENT.CHARACTERS_BODY_LIST);
+    customEvents.registerListener(EVENT.CHARACTERS_BODY_REMOVE);
   }
   
   showModalCharacters() {
@@ -170,7 +171,8 @@ class PresenterModal {
       const getPieceOfData = this._model.getCharactersCollection(currentPageNumber);
       
       this._view.removeTbodyTable();
-      this._view.removeModalWindowPagination();
+  
+      customEvents.runListener(EVENT.REMOVE_VIEW_PAGINATION);
       
       this.tableBodyTemplate(getPieceOfData);
   
@@ -198,6 +200,7 @@ class PresenterModal {
     customEvents.addListener(EVENT.CHARACTERS_BODY_LIST, (number) => {
       this.tableBodyTemplate(this._model.getCharactersCollection( parseInt(number)) );
     });
+    customEvents.addListener(EVENT.CHARACTERS_BODY_REMOVE, () => this._view.removeTbodyTable());
   }
 }
 
@@ -218,6 +221,7 @@ class PresenterPagination {
   initListeners() {
     customEvents.registerListener(EVENT.SHOW_PAGINATION);
     customEvents.registerListener(EVENT.REMOVE_PAGINATION);
+    customEvents.registerListener(EVENT.REMOVE_VIEW_PAGINATION);
   }
   
   eventPagination() {
@@ -289,8 +293,7 @@ class PresenterPagination {
       const tag = tagLinc[ item ];
       
       if (parseInt(tag.innerHTML) === pageNumber) {
-        this._view.removeTbodyTable();
-  
+        customEvents.runListener(EVENT.CHARACTERS_BODY_REMOVE);
         customEvents.runListener(EVENT.CHARACTERS_BODY_LIST, tag.innerHTML);
   
         tag.className = 'modal__current-page';
@@ -329,7 +332,7 @@ class PresenterPagination {
   }
   
   removePagination() {
-    this._view.removeModalWindowPagination();
+    this._view.removePaginationOnPage();
     
     this._model.setPaginationSettings({ page: 1 });
   }
@@ -337,5 +340,6 @@ class PresenterPagination {
   buildPagination() {
     customEvents.addListener(EVENT.SHOW_PAGINATION, () => this.showPagination());
     customEvents.addListener(EVENT.REMOVE_PAGINATION, () => this.removePagination());
+    customEvents.addListener(EVENT.REMOVE_VIEW_PAGINATION, () => this._view.removePaginationOnPage());
   }
 }
