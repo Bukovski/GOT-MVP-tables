@@ -285,16 +285,19 @@ class PresenterModal {
       this.showPagination();
     };
     
+    const currentCountOfRecords = this._model.getPaginationSettings().notes;
+    
     this._view.toggleSelectRecordsOfPage((even) => {
       const target = even.target;
-      const valueOfOption = target.options[ target.selectedIndex ].value;
+      const valueOfOption = parseInt(target.options[ target.selectedIndex ].value);
       
-      this._model.setPaginationSettings({ notes: parseInt(valueOfOption) });
+      if (currentCountOfRecords !== valueOfOption) {
+        this._model.setPaginationSettings({ notes: valueOfOption });
   
-      resetDataOnPage();
+        resetDataOnPage();
+      }
     })
   }
-  
   
   buildModalWindow() {
     this._view.bindModalClose(this.closeModalCharacters.bind(this));

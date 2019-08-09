@@ -98,9 +98,6 @@ class ModelBook {
     
     const records = this._filterIdCharacters.slice(start, end);
     
-    console.log(records)
-    console.log(pageNumber)
-    
     return records;
   }
   
