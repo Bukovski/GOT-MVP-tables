@@ -116,6 +116,7 @@ class ViewTable {
   }
 }
 
+
 class ViewModal {
   constructor() {
     this.modal = document.getElementsByClassName("modal")[ 0 ];

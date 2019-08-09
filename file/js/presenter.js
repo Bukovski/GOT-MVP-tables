@@ -168,7 +168,13 @@ class PresenterModal {
   eventOptionOfSelect() {
     const resetDataOnPage = () => {
       const currentPageNumber = this._model.getPaginationSettings().page;
-      const getPieceOfData = this._model.getCharactersCollection(currentPageNumber);
+      let getPieceOfData = this._model.getCharactersCollection(currentPageNumber);
+      
+      const { size, page } = this._model.getPaginationSettings();
+      
+      if (size < page) { //when list size to small, put the last page
+        this._model.setPaginationSettings({ page: size });
+      }
       
       this._view.removeTbodyTable();
   
@@ -179,11 +185,12 @@ class PresenterModal {
       customEvents.runListener(EVENT.SHOW_PAGINATION);
     };
     
-    const currentCountOfRecords = this._model.getPaginationSettings().notes;
     
     this._view.toggleSelectRecordsOfPage((even) => {
       const target = even.target;
       const valueOfOption = parseInt(target.options[ target.selectedIndex ].value);
+      
+      const currentCountOfRecords = this._model.getPaginationSettings().notes;
       
       if (currentCountOfRecords !== valueOfOption) {
         this._model.setPaginationSettings({ notes: valueOfOption });
@@ -203,7 +210,6 @@ class PresenterModal {
     customEvents.addListener(EVENT.CHARACTERS_BODY_REMOVE, () => this._view.removeTbodyTable());
   }
 }
-
 
 
 class PresenterPagination {
