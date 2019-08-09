@@ -18,6 +18,9 @@ if (true) {
 
 const EVENT = {
   REQUESTS_CHARACTERS: "RequestsCharacters",
+  CHARACTERS_BODY_LIST: "CharactersBodyList",
+  SHOW_PAGINATION: "ShowPagination",
+  REMOVE_PAGINATION: "RemovePagination",
 };
 
 function createLinkCharacters(arr) {

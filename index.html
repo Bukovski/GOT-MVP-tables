@@ -32,9 +32,10 @@
 <script>
   const model = new ModelBook();
   const tablePresenter = new PresenterTable(model, new ViewTable());
+  const paginationPresenter = new PresenterPagination(model,  new ViewModal());
   const modalPresenter = new PresenterModal(model,  new ViewModal());
   
-  const setView = () => modalPresenter.initialize(tablePresenter);
+  const setView = () => modalPresenter.initialize(tablePresenter, paginationPresenter);
   
   window.onload = setView;
 </script>
