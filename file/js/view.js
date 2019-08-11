@@ -1,6 +1,10 @@
 class ViewTable {
   constructor() {
-    this.tableContainer = document.getElementById("container");
+    this._tableContainer = document.getElementById("container");
+  }
+  
+  getTableContainer() {
+    return this._tableContainer;
   }
   
   createTableHeader(table, fields, fieldTitles, callback) {
@@ -119,25 +123,33 @@ class ViewTable {
 
 class ViewModal {
   constructor() {
-    this.modal = document.getElementsByClassName("modal")[ 0 ];
-    this.crossClosure = document.getElementsByClassName("modal__close")[ 0 ];
-    this.selectOfRecord = document.getElementById("modalSelect");
+    this._modal = document.getElementsByClassName("modal")[ 0 ];
+    this._crossClosure = document.getElementsByClassName("modal__close")[ 0 ];
+    this._selectOfRecord = document.getElementById("modalSelect");
+  }
+  
+  getModalContainer() {
+    return this._modal;
+  }
+  
+  getSelectRecordContainer() {
+    return this._selectOfRecord;
   }
   
   showModalWindow() {
-    this.modal.style.display = "block";
+    this._modal.style.display = "block";
   }
   
   hideModalWindow() {
-    this.modal.style.display = "none";
+    this._modal.style.display = "none";
   }
   
   removeModalWindowTable() {
-    this.modal.querySelector("#modalTable").remove();
+    this._modal.querySelector("#modalTable").remove();
   }
   
   bindModalClose(callback) {
-    this.crossClosure.addEventListener("click", callback);
+    this._crossClosure.addEventListener("click", callback);
   }
   
   createTableHeader(table, fields, fieldTitles, callback) {
@@ -253,18 +265,18 @@ class ViewModal {
   }
   
   toggleSelectRecordsOfPage(callback) {
-    this.selectOfRecord.addEventListener("click", callback)
+    this._selectOfRecord.addEventListener("click", callback)
   }
 }
 
 
 class ViewPagination {
   constructor() {
-    this.modal = document.getElementsByClassName("modal")[ 0 ];
+    this._modal = document.getElementsByClassName("modal")[ 0 ];
   }
   
   removePaginationOnPage() {
-    this.modal.querySelector("#modalPagination").remove();
+    this._modal.querySelector("#modalPagination").remove();
   }
   
   paginationTemplate() {
@@ -280,18 +292,18 @@ class ViewPagination {
     
     const span = document.createElement('span');
     
-    this.modal.appendChild(wrapper);
+    this._modal.appendChild(wrapper);
     wrapper.appendChild(linkLeft);
     wrapper.appendChild(span);
     wrapper.appendChild(linkRight);
   }
   
   getPaginationSpan() {
-    return this.modal.querySelector("#modalPagination > span")
+    return this._modal.querySelector("#modalPagination > span")
   }
   
   getPaginationLinks() {
-    return this.modal.getElementsByTagName("a");
+    return this._modal.getElementsByTagName("a");
   }
   
   getPaginationInnerButtons() {

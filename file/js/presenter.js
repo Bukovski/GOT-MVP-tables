@@ -2,18 +2,20 @@ class PresenterTable {
   constructor(model, view) {
     this._model = model;
     this._view = view;
+  
+    Object.freeze(this);
   }
   
-  initialize() {
-    this._model.setBookCollection();
+  async initialize() {
+    await this._model.setBookCollection();
     
     this.createTable();
   }
   
-  async createTable() {
-    const collection = await this._model.getBookCollection();
+  createTable() {
+    const collection = this._model.getBookCollection();
     const keyTable = this._model._keyMainTable;
-    const container = this._view.tableContainer;
+    const container = this._view.getTableContainer();
     
     this._view.tableTemplate(container, collection, keyTable, this._model.keyUpperCase(keyTable));
     
@@ -42,14 +44,14 @@ class PresenterTable {
     this._view.createTableBody(table, collection, keyTable, this._view.tableBodyCallback);
   }
   
-  async sortTableBody(target) {
+  sortTableBody(target) {
     const dataSortOrder = this._view.getAttributeSortOrder(target);
     
     this._model.setSortOrder(dataSortOrder);
     this._view.setAttributeSortOrder(target, this._model.getSortOrder());
     
     const attrName = target.getAttribute('data-name');
-    const sortBooks = await this._model.sortBooks(attrName);
+    const sortBooks = this._model.sortBooks(attrName);
     
     this._view.removeTbodyTable();
     this.tableBodyTemplate(sortBooks)
@@ -61,6 +63,8 @@ class PresenterModal {
   constructor(model, view) {
     this._model = model;
     this._view = view;
+  
+    Object.freeze(this);
   }
   
   initialize(tablePresenter, paginationPresenter) {
@@ -94,7 +98,7 @@ class PresenterModal {
   createTable() {
     const collection = this._model.getCharactersCollection();
     const keyTable = this._model.getKeyModalTable();
-    const container = this._view.modal;
+    const container = this._view.getModalContainer();
     
     this._view.tableTemplate(container, collection, keyTable, this._model.keyUpperCase(keyTable));
     
@@ -147,7 +151,7 @@ class PresenterModal {
   }
   
   addOptionToSelect() {
-    const whereToInsert = this._view.selectOfRecord;
+    const whereToInsert = this._view.getSelectRecordContainer();
     const currentCountOfRecords = this._model.getPaginationSettings().notes;
     let select;
     
@@ -211,140 +215,145 @@ class PresenterModal {
 }
 
 
-class PresenterPagination {
-  constructor(model, view) {
-    this._model = model;
-    this._view = view;
-    this._paginationLayout = "";
-  }
+const PresenterPagination = (function () {
+  let _paginationLayout = "";
   
-  initialize() {
-    this.initListeners();
-    this.buildPagination();
-  }
-  
-  initListeners() {
-    customEvents.registerListener(EVENT.SHOW_PAGINATION);
-    customEvents.registerListener(EVENT.REMOVE_PAGINATION);
-    customEvents.registerListener(EVENT.REMOVE_VIEW_PAGINATION);
-  }
-  
-  eventPagination() {
-    this._view.togglePaginationButtonLeft((event) => {
+  return class {
+    constructor(model, view) {
+      this._model = model;
+      this._view = view;
+      
+      Object.freeze(this);
+    }
+    
+    initialize() {
+      this.initListeners();
+      this.buildPagination();
+    }
+    
+    initListeners() {
+      customEvents.registerListener(EVENT.SHOW_PAGINATION);
+      customEvents.registerListener(EVENT.REMOVE_PAGINATION);
+      customEvents.registerListener(EVENT.REMOVE_VIEW_PAGINATION);
+    }
+    
+    eventPagination() {
+      this._view.togglePaginationButtonLeft((event) => {
+        let pageNumber = this._model.getPaginationSettings().page;
+        
+        pageNumber--;
+        
+        this._model.setPaginationSettings({ page: pageNumber });
+        
+        if (pageNumber < 1) {
+          this._model.setPaginationSettings({ page: 1 });
+        }
+        
+        this.startPagination();
+      });
+      
+      
+      this._view.togglePaginationButtonRight((event) => {
+        let { size, page } = this._model.getPaginationSettings();
+        
+        page++;
+        
+        this._model.setPaginationSettings({ page: page });
+        
+        if (page > size) {
+          this._model.setPaginationSettings({ page: size });
+        }
+        
+        this.startPagination();
+      });
+    }
+    
+    addPagesNumberPagination(from, to) {
+      for (let item = from; item < to; item++) {
+        _paginationLayout += `<a>${ item }</a>`;
+      }
+    }
+    
+    addFirstPagePagination() {
+      _paginationLayout += '<a>1</a><i>...</i>';
+    }
+    
+    addLastPagePagination() {
+      const pageSize = this._model.getPaginationSettings().size;
+      
+      _paginationLayout += `<i>...</i><a>${ pageSize }</a>`;
+    }
+    
+    writePagination() {
+      this._view.getPaginationSpan().innerHTML = _paginationLayout;
+      _paginationLayout = "";
+      
+      this.writeButtonsNumberPagination();
+    }
+    
+    writeButtonsNumberPagination() {
       let pageNumber = this._model.getPaginationSettings().page;
+      const tagLinc = this._view.getPaginationInnerButtons();
       
-      pageNumber--;
+      const buttonsClick = (event) => {
+        const numberPage = +event.target.innerHTML; //get number of click button
+        
+        this._model.setPaginationSettings({ page: numberPage });
+        this.startPagination();
+      };
       
-      this._model.setPaginationSettings({ page: pageNumber });
-      
-      if (pageNumber < 1) {
-        this._model.setPaginationSettings({ page: 1 });
+      for (let item = 0, len = tagLinc.length; item < len; item++) {
+        const tag = tagLinc[ item ];
+        
+        if (parseInt(tag.innerHTML) === pageNumber) {
+          customEvents.runListener(EVENT.CHARACTERS_BODY_REMOVE);
+          customEvents.runListener(EVENT.CHARACTERS_BODY_LIST, tag.innerHTML);
+          
+          tag.className = 'modal__current-page';
+        }
+        
+        tag.addEventListener('click', buttonsClick);
       }
-      
-      this.startPagination();
-    });
-    
-    
-    this._view.togglePaginationButtonRight((event) => {
-      let { size, page } = this._model.getPaginationSettings();
-      
-      page++;
-      
-      this._model.setPaginationSettings({ page: page });
-      
-      if (page > size) {
-        this._model.setPaginationSettings({ page: size });
-      }
-      
-      this.startPagination();
-    });
-  }
-  
-  addPagesNumberPagination(from, to) {
-    for (let item = from; item < to; item++) {
-      this._paginationLayout += `<a>${ item }</a>`;
-    }
-  }
-  
-  addFirstPagePagination() {
-    this._paginationLayout += '<a>1</a><i>...</i>';
-  }
-  
-  addLastPagePagination() {
-    const pageSize = this._model.getPaginationSettings().size;
-    
-    this._paginationLayout += `<i>...</i><a>${ pageSize }</a>`;
-  }
-  
-  writePagination() {
-    this._view.getPaginationSpan().innerHTML = this._paginationLayout;
-    this._paginationLayout = "";
-    
-    this.writeButtonsNumberPagination();
-  }
-  
-  writeButtonsNumberPagination() {
-    let pageNumber = this._model.getPaginationSettings().page;
-    const tagLinc = this._view.getPaginationInnerButtons();
-    
-    const buttonsClick = (event) => {
-      const numberPage = +event.target.innerHTML; //get number of click button
-      
-      this._model.setPaginationSettings({ page: numberPage });
-      this.startPagination();
-    };
-    
-    for (let item = 0, len = tagLinc.length; item < len; item++) {
-      const tag = tagLinc[ item ];
-      
-      if (parseInt(tag.innerHTML) === pageNumber) {
-        customEvents.runListener(EVENT.CHARACTERS_BODY_REMOVE);
-        customEvents.runListener(EVENT.CHARACTERS_BODY_LIST, tag.innerHTML);
-  
-        tag.className = 'modal__current-page';
-      }
-      
-      tag.addEventListener('click', buttonsClick);
-    }
-  }
-  
-  startPagination() {
-    const { step, size, page } = this._model.getPaginationSettings();
-    
-    const stepBothSide = step * 2;
-    
-    if ( size < stepBothSide + 6 ) {
-      this.addPagesNumberPagination( 1, size + 1 );
-    } else if ( page < stepBothSide + 1 ) {
-      this.addPagesNumberPagination(1, stepBothSide + 4);
-      this.addLastPagePagination();
-    } else if ( page > size - stepBothSide ) {
-      this.addFirstPagePagination();
-      this.addPagesNumberPagination( (size - stepBothSide) - 2, size + 1 );
-    } else {
-      this.addFirstPagePagination();
-      this.addPagesNumberPagination( (page - step), ((page + step) + 1) );
-      this.addLastPagePagination()
     }
     
-    this.writePagination()
-  }
-  
-  showPagination() {
-    this._view.paginationTemplate(); //drawn pagination
-    this.eventPagination();
-    this.startPagination();
-  }
-  
-  removePagination() {
-    this._view.removePaginationOnPage();
+    startPagination() {
+      const { step, size, page } = this._model.getPaginationSettings();
+      
+      const stepBothSide = step * 2;
+      
+      if (size < stepBothSide + 6) {
+        this.addPagesNumberPagination(1, size + 1);
+      } else if (page < stepBothSide + 1) {
+        this.addPagesNumberPagination(1, stepBothSide + 4);
+        this.addLastPagePagination();
+      } else if (page > size - stepBothSide) {
+        this.addFirstPagePagination();
+        this.addPagesNumberPagination((size - stepBothSide) - 2, size + 1);
+      } else {
+        this.addFirstPagePagination();
+        this.addPagesNumberPagination((page - step), ((page + step) + 1));
+        this.addLastPagePagination()
+      }
+      
+      this.writePagination()
+    }
     
-    this._model.setPaginationSettings({ page: 1 });
+    showPagination() {
+      this._view.paginationTemplate(); //drawn pagination
+      this.eventPagination();
+      this.startPagination();
+    }
+    
+    removePagination() {
+      this._view.removePaginationOnPage();
+      
+      this._model.setPaginationSettings({ page: 1 });
+    }
+    
+    buildPagination() {
+      customEvents.addListener(EVENT.SHOW_PAGINATION, () => this.showPagination());
+      customEvents.addListener(EVENT.REMOVE_PAGINATION, () => this.removePagination());
+      customEvents.addListener(EVENT.REMOVE_VIEW_PAGINATION, () => this._view.removePaginationOnPage());
+    }
   }
-  
-  buildPagination() {
-    customEvents.addListener(EVENT.SHOW_PAGINATION, () => this.showPagination());
-    customEvents.addListener(EVENT.REMOVE_PAGINATION, () => this.removePagination());
-    customEvents.addListener(EVENT.REMOVE_VIEW_PAGINATION, () => this._view.removePaginationOnPage());
-  }
-}
+})();
