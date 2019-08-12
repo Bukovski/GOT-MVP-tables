@@ -111,6 +111,10 @@ const ModelBook = (function () {
       
       return records;
     }
+  
+    clearFilterCharactersId() {
+      this._filterIdCharacters.splice(0, this._filterIdCharacters.length);
+    }
     
     getKeyModalTable() {
       return this._keyModalTable;

@@ -91,7 +91,7 @@ class PresenterModal {
   
   closeModalCharacters(event) {
     this._view.hideModalWindow();
-    
+
     this.resetDataInsideModalWindow();
   }
   
@@ -107,6 +107,7 @@ class PresenterModal {
   
   resetDataInsideModalWindow() {
     this._view.removeModalWindowTable();
+    this._model.clearFilterCharactersId();
     
     customEvents.runListener(EVENT.REMOVE_PAGINATION);
   }
