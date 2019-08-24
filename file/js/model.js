@@ -130,17 +130,17 @@ const ModelBook = (function () {
       return this._settingsPagination
     }
     
-    setPaginationSettings(...collection) {
-      const checkDataObject = (before, item) => {
-        if (keySettings.includes(Object.keys(item)[ 0 ])) {
-          return before = Object.assign(before, item)
-        }
-        
-        return before
-      };
-      
+    setPaginationSettings(obj) {
+      const getObjectData = {};
       const keySettings = Object.keys(this._settingsPagination);
-      const getObjectData = collection.reduce(checkDataObject, {});
+      
+      for (let key in obj) {
+        if (keySettings.includes(key)) {
+           const value = obj[ key ];
+           
+           getObjectData[ key ] = value;
+        }
+      }
       
       Object.assign(this._settingsPagination, getObjectData);
     }
