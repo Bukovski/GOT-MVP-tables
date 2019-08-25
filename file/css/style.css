@@ -26,7 +26,7 @@
   padding: 5px;
 }
 
-.modal {
+.modal-bg {
   display: none;
   position: fixed;
   top: 0;
@@ -36,7 +36,8 @@
   text-align: center;
   background: #373737;
 }
-.modal__wrap {
+.modal {
+  display: none;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -45,6 +46,7 @@
   transform: translate(-50%,-50%);
   border-radius: 5px;
   background: #fff8dd;
+  z-index: 20;
 }
 .modal__header {
   display: flex;

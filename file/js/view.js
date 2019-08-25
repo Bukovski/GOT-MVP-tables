@@ -124,13 +124,13 @@ class ViewTable {
 class ViewModal {
   constructor() {
     this._modal = document.getElementsByClassName("modal")[ 0 ];
-    this._modalWrap = document.getElementsByClassName("modal__wrap")[ 0 ];
+    this._modalBg = document.getElementsByClassName("modal-bg")[ 0 ];
     this._crossClosure = document.getElementsByClassName("modal__close")[ 0 ];
     this._selectOfRecord = document.getElementById("modalSelect");
   }
   
   getModalContainer() {
-    return this._modalWrap;
+    return this._modal;
   }
   
   getSelectRecordContainer() {
@@ -139,10 +139,12 @@ class ViewModal {
   
   showModalWindow() {
     this._modal.style.display = "block";
+    this._modalBg.style.display = "block";
   }
   
   hideModalWindow() {
     this._modal.style.display = "none";
+    this._modalBg.style.display = "none";
   }
   
   removeModalWindowTable() {
@@ -151,6 +153,10 @@ class ViewModal {
   
   bindModalClose(callback) {
     this._crossClosure.addEventListener("click", callback);
+  }
+  
+  bindModalBackground(callback) {
+    this._modalBg.addEventListener("click", callback, true);
   }
   
   createTableHeader(table, fields, fieldTitles, callback) {
@@ -273,12 +279,11 @@ class ViewModal {
 
 class ViewPagination {
   constructor() {
-    this._modalWrap = document.getElementsByClassName("modal__wrap")[ 0 ];
-  
+    this._modal = document.getElementsByClassName("modal")[ 0 ];
   }
   
   removePaginationOnPage() {
-    this._modalWrap.querySelector("#modalPagination").remove();
+    this._modal.querySelector("#modalPagination").remove();
   }
   
   paginationTemplate() {
@@ -294,18 +299,18 @@ class ViewPagination {
     
     const span = document.createElement('span');
     
-    this._modalWrap.appendChild(wrapper);
+    this._modal.appendChild(wrapper);
     wrapper.appendChild(linkLeft);
     wrapper.appendChild(span);
     wrapper.appendChild(linkRight);
   }
   
   getPaginationSpan() {
-    return this._modalWrap.querySelector("#modalPagination > span")
+    return this._modal.querySelector("#modalPagination > span")
   }
   
   getPaginationLinks() {
-    return this._modalWrap.getElementsByTagName("a");
+    return this._modal.getElementsByTagName("a");
   }
   
   getPaginationInnerButtons() {

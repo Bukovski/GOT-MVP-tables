@@ -205,6 +205,7 @@ class PresenterModal {
   
   buildModalWindow() {
     this._view.bindModalClose(this.closeModalCharacters.bind(this));
+    this._view.bindModalBackground(this.closeModalCharacters.bind(this));
     this.showSelectOption(); //only once for all modal window
   
     customEvents.addListener(EVENT.REQUESTS_CHARACTERS, () => this.showModalCharacters());
