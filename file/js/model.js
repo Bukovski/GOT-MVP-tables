@@ -77,7 +77,7 @@ const ModelBook = (function () {
     
     async setCharactersCollection(numberCharacters) {
       const idCharacters = numberCharacters.split(",");
-      let charactersBuffer;
+      let charactersBuffer = {};
       
       if (PATH.HIDE) {
         const arrRequests = idCharacters.map(async (number) => {

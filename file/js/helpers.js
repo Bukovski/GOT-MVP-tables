@@ -1,6 +1,6 @@
 let PATH = {};
 
-if (true) {
+if (!true) {
   console.log("Local data");
   
   PATH = {
